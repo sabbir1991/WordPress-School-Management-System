@@ -1,0 +1,24 @@
+{
+    "name": "sabbir1991/wp-education-management",
+    "description": "A education management system for WordPress",
+    "keywords": ["wordpress", "plugin", "school", "college", "teacher", "course", "management", "student"],
+    "homepage": "http://web-apps.ninja",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Sabbir Ahmed",
+            "email": "sabbir.081070@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/database": "~5.0",
+        "tareq1988/wp-eloquent": "dev-master"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "WebApps\\WPEDU\\": "includes/"
+        }
+    }
+}
