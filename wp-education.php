@@ -55,6 +55,13 @@ final class WebApps_WPEDU {
     public $version = '1.0';
 
     /**
+     * Minimum PHP version required
+     *
+     * @var string
+     */
+    private $min_php = '5.4.0';
+
+    /**
      * Initializes the WebApps_WPEDU() class
      *
      * Checks for an existing WebApps_WPEDU() instance
@@ -78,6 +85,13 @@ final class WebApps_WPEDU {
      */
     public function __construct() {
 
+        // dry check on older PHP versions, if found deactivate itself with an error
+        register_activation_hook( __FILE__, array( $this, 'auto_deactivate' ) );
+
+        if ( ! $this->is_supported_php() ) {
+            return;
+        }
+
         // Define constants
         $this->defines();
 
@@ -92,6 +106,39 @@ final class WebApps_WPEDU {
 
         // Loaded action
         do_action( 'wpedu_loaded' );
+    }
+
+    /**
+     * Check if the PHP version is supported
+     *
+     * @return bool
+     */
+    public function is_supported_php() {
+        if ( version_compare( PHP_VERSION, $this->min_php, '<=' ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Bail out if the php version is lower than
+     *
+     * @return void
+     */
+    function auto_deactivate() {
+        if ( $this->is_supported_php() ) {
+            return;
+        }
+
+        deactivate_plugins( basename( __FILE__ ) );
+
+        $error = __( '<h1>An Error Occured</h1>', 'erp' );
+        $error .= __( '<h2>Your installed PHP Version is: ', 'erp' ) . PHP_VERSION . '</h2>';
+        $error .= __( '<p>The <strong>WP Education Mangement</strong> plugin requires PHP version <strong>', 'erp' ) . $this->min_php . __( '</strong> or greater', 'erp' );
+        $error .= __( '<p>The version of your PHP is ', 'erp' ) . '<a href="http://php.net/supported-versions.php" target="_blank"><strong>' . __( 'unsupported and old', 'erp' ) . '</strong></a>.';
+        $error .= __( 'You should update your PHP software or contact your host regarding this matter.</p>', 'erp' );
+        wp_die( $error, __( 'Plugin Activation Error', 'erp' ), array( 'response' => 200, 'back_link' => true ) );
     }
 
     /**
